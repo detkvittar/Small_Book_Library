@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Search form -->
+    <form method="get" action="/home">
+        <input type="text" name="search" value="{{ search_query }}" placeholder="Search for books...">
+        <input type="submit" value="Search">
+    </form>
+
+    <!-- Sorting dropdown -->
+    <form method="get" action="/home">
+        <select name="sort_by">
+            <option value="title" {% if sort_by == 'title' %} selected {% endif %}>Title</option>
+            <option value="author" {% if sort_by == 'author' %} selected {% endif %}>Author</option>
+        </select>
+        <input type="submit" value="Sort">
+    </form>
+
+    {% if not books %}
+    <p>There were no books found that match your criteria.</p>
+    {% endif %}
+
+    {% for book in books %}
+    <div>
+        <h3>{{ book.title }} by {{ book.author.name }}</h3>
+        {% if book.cover_url %}
+        <img src="{{ book.cover_url }}" alt="{{ book.title }} cover" width="100">
+        {% endif %}
+        <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post">
+            <button type="submit">Delete Book</button>
+        </form>
+    </div>
+    {% endfor %}
+
+</body>
+
+</html>
